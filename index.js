@@ -68,23 +68,24 @@ app.get('/show_files',(req,res)=>{
         const AllFiles = files.filter(item => item.endsWith('.txt'));
 
         res.send(`
+
         <div style="background-color:orange;padding:10px 0px;text-align:center;color:white">
            <h1>Show All Text Files</h1><p><a href="/" style="color:#DAD4E7 ">Back to Home</a></p></div>
-           <ul>
+           
            ${
             AllFiles.map(item => 
-            `<dl style="display: list-item;list-style-type: disc;">
-            <dt>
+            `<ul>
+            <li>
                 <b>File Name : </b>${item}
-            </dt>
-            <dd style="display: list-item;list-style-type: circle;">
+            </li>
+            <li>
                 <b>File Content : </b>
                 ${fs.readFileSync(`./TimeStamp/${item}`, 'utf8')}
-            </dd>
-            </dl>`)
+            </li>
+            </ul><hr>`).join('')
         }
             
-            </ul>
+           
         `)
 
     } catch (error) {
@@ -95,6 +96,7 @@ app.get('/show_files',(req,res)=>{
 
 
 app.listen(4000,()=>{
+
     console.log(`Server Running success in Port 4000`);
 })
 
