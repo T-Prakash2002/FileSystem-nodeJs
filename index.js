@@ -1,60 +1,96 @@
 const fs=require('fs')
-const express=require('express')
+const express=require('express');
+const date = require('date-and-time') 
 
 
 const app=express();
 
+app.get('/',(req,res)=>{
+    res.send(`
 
-app.get('/', (req, res)=>{
-
-    //Sending response status
-    res.status(200).send(`
-
-            <div style="border:1px solid black">
-
-            <h1 
-            style="padding:10px 10px;text-align:center;background-color:gray;">
-            Express Server is Connected !
-            </h1>
-            <div style="text-align:center">
-            <p>
-            <span style="font-size:18px"> 
-                To Create a New txt file
-            </span> --> <br>
-            <button style="border:2px solid Tomato;font-size:18px;border-radius:9px;">
-                <a style="text-decoration:none" href="/new-file">
-                    Click Here
-                </a>
-            </button>
-            </p>
-            <p>
-            <span style="font-size:18px">
-                Show All txt file
-                </span> --> <br>
-                <button style="border:2px solid Tomato;font-size:18px;border-radius:9px;">
-            <a style="text-decoration:none;" href="/read-all-files">
-                Click Here
-            </a>
-            </button>
-            </p>
-
-            </div></div>
-    `);
     
-});
 
-app.get('/new-file',(res,req)=>{
-    
-    
+        <center>
+        <h1 style="background-color:orange;padding:10px 0px;text-align:center;color:white">
+           File System NodeJs<p>Create a File,Write and Read </p></h1>
+        <div style="margin-top:50px">
+
+            <a style="background-color:rgb(240, 128, 128);padding:10px;text-decoration:none; color:white" href='/new_file'>Create a file -></a>
+            <br><br><br><br>
+            <a style="background-color:rgb(240, 128, 128);padding:10px;text-decoration:none; color:white" href='/show_files'>Show files -></a>
+        
+        </div>
+    </center>
+    `)
 })
 
 
-app.get('/read-all-files',(res,req)=>{
+app.get('/new_file',(req,res)=>{
+    
+try {
+    
+    const date = require('date-and-time') 
+  
 
+    const now  =  new Date(); 
+    
+    const value = date.format(now, "DD-MM-YYYY HH-MM-SS"); 
+
+    const filePath = `./TimeStamp/${value}.txt`;
+
+    const content = `Current TimeStamp : ${value}`;
+
+    fs.writeFileSync(filePath, content, 'utf8');
+
+    let data = fs.readFileSync(filePath, 'utf8');
+
+    res.send(`
+    
+    <div style="background-color:orange;padding:10px 0px;text-align:center;color:white">
+        <h1>File created and Wrote content successfully!</h1>
+        <p>Created File Name : ${value}.txt</p>
+        <p>Txt File Content : ${data}</p>
+        <p><a href="/" style="color:#DAD4E7 ">Back to Home</a></p>
+    </div>`);
+
+
+} catch (error) {
+    console.log(error);
+}
 })
 
+app.get('/show_files',(req,res)=>{
 
+    try {
+        
+        const files = fs.readdirSync('./TimeStamp');
 
+        const AllFiles = files.filter(item => item.endsWith('.txt'));
+
+        res.send(`
+        <div style="background-color:orange;padding:10px 0px;text-align:center;color:white">
+           <h1>Show All Text Files</h1><p><a href="/" style="color:#DAD4E7 ">Back to Home</a></p></div>
+           <ul>
+           ${
+            AllFiles.map(item => 
+            `<dl style="display: list-item;list-style-type: disc;">
+            <dt>
+                <b>File Name : </b>${item}
+            </dt>
+            <dd style="display: list-item;list-style-type: circle;">
+                <b>File Content : </b>
+                ${fs.readFileSync(`./TimeStamp/${item}`, 'utf8')}
+            </dd>
+            </dl>`)
+        }
+            
+            </ul>
+        `)
+
+    } catch (error) {
+        console.log(error);
+    }
+})
 
 
 
